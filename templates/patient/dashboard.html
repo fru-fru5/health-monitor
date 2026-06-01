@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard - Health Monitor{% endblock %}
+{% block page_title %}My Dashboard{% endblock %}
+{% block topbar_actions %}
+  <a href="{{ url_for('patient.add_reading') }}" class="btn btn-primary btn-sm">+ Add Reading</a>
+{% endblock %}
+
+{% block content %}
+
+<!-- Stats -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">Total Readings</div>
+    <div class="stat-value">{{ readings | length }}</div>
+    <div class="stat-sub">All time</div>
+  </div>
+  <div class="stat-card {% if flagged %}warning{% else %}success{% endif %}">
+    <div class="stat-label">Flagged Alerts</div>
+    <div class="stat-value">{{ flagged | length }}</div>
+    <div class="stat-sub">Abnormal readings</div>
+  </div>
+  {% if readings %}
+  <div class="stat-card">
+    <div class="stat-label">Last Blood Pressure</div>
+    <div class="stat-value" style="font-size:22px">
+      {% if readings[0].blood_pressure_sys %}
+        {{ readings[0].blood_pressure_sys }}/{{ readings[0].blood_pressure_dia }}
+      {% else %}—{% endif %}
+    </div>
+    <div class="stat-sub">mmHg</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Last Heart Rate</div>
+    <div class="stat-value">
+      {% if readings[0].heart_rate %}{{ readings[0].heart_rate }}{% else %}—{% endif %}
+    </div>
+    <div class="stat-sub">bpm</div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Chart + Alerts -->
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header"><h3>Health Trend (Last 10 Readings)</h3></div>
+    <div class="card-body">
+      {% if readings %}
+        {% set labels      = readings | reverse | map(attribute='recorded_at') | map('string') | list %}
+        {% set bp_sys_data = readings | reverse | map(attribute='blood_pressure_sys') | list %}
+        {% set hr_data     = readings | reverse | map(attribute='heart_rate') | list %}
+        <canvas id="healthChart"
+          data-labels="{{ labels | tojson }}"
+          data-bp-sys="{{ bp_sys_data | tojson }}"
+          data-heart-rate="{{ hr_data | tojson }}"
+          style="max-height:260px">
+        </canvas>
+      {% else %}
+        <p class="text-muted">No readings yet. Add your first reading to see trends.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3>Recent Alerts</h3></div>
+    <div class="card-body">
+      {% if flagged %}
+        {% for r in flagged[:5] %}
+          <div class="alert alert-warning" style="margin-bottom:8px">
+            <strong>{{ r.recorded_at.strftime('%d %b %Y, %H:%M') }}</strong><br/>
+            {% for alert in r.check_alerts() %}
+              {{ alert }}<br/>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-muted">No alerts. All readings are within normal range.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Recent Readings Table -->
+<div class="card mt-24">
+  <div class="card-header">
+    <h3>Recent Readings</h3>
+    <a href="{{ url_for('patient.history') }}" class="btn btn-outline btn-sm">View All</a>
+  </div>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Blood Pressure</th>
+          <th>Heart Rate</th>
+          <th>Temperature</th>
+          <th>Blood Sugar</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in readings %}
+        <tr class="{% if r.is_flagged %}flagged-row{% endif %}">
+          <td>{{ r.recorded_at.strftime('%d %b %Y, %H:%M') }}</td>
+          <td>{{ r.blood_pressure_sys }}/{{ r.blood_pressure_dia }} mmHg</td>
+          <td>{{ r.heart_rate or '—' }} bpm</td>
+          <td>{{ r.temperature or '—' }} C</td>
+          <td>{{ r.blood_sugar or '—' }} mg/dL</td>
+          <td>
+            {% if r.is_flagged %}
+              <span class="badge badge-warning">Flagged</span>
+            {% else %}
+              <span class="badge badge-success">Normal</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-muted" style="padding:20px">No readings recorded yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

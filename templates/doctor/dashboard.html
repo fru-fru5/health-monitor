@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Doctor Dashboard - Health Monitor{% endblock %}
+{% block page_title %}Doctor Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">Assigned Patients</div>
+    <div class="stat-value">{{ patients | length }}</div>
+  </div>
+  <div class="stat-card {% if flagged %}warning{% else %}success{% endif %}">
+    <div class="stat-label">Flagged Readings</div>
+    <div class="stat-value">{{ flagged | length }}</div>
+    <div class="stat-sub">Requiring attention</div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <!-- Patients List -->
+  <div class="card">
+    <div class="card-header"><h3>My Patients</h3></div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          {% for p in patients %}
+          <tr>
+            <td>{{ p.name }}</td>
+            <td class="text-muted">{{ p.email }}</td>
+            <td><a href="{{ url_for('doctor.patient_detail', patient_id=p.id) }}" class="btn btn-outline btn-sm">View</a></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="3" class="text-muted" style="padding:16px">No patients assigned yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Flagged Readings -->
+  <div class="card">
+    <div class="card-header"><h3>Recent Flagged Readings</h3></div>
+    <div class="card-body">
+      {% if flagged %}
+        {% for r in flagged %}
+          <div class="alert alert-warning" style="margin-bottom:8px">
+            <strong>{{ r.patient.name }}</strong> &mdash; {{ r.recorded_at.strftime('%d %b %Y, %H:%M') }}<br/>
+            {% for alert in r.check_alerts() %}
+              {{ alert }}<br/>
+            {% endfor %}
+            <a href="{{ url_for('doctor.patient_detail', patient_id=r.patient_id) }}" class="btn btn-sm btn-outline" style="margin-top:6px">View Patient</a>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-muted">No flagged readings at this time.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
