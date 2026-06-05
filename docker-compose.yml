@@ -5,12 +5,18 @@ services:
     image: mysql:8.0
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: "fru23junior01.05#"
       MYSQL_DATABASE: health_monitor
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 60s
 
   web:
     build: .
@@ -18,10 +24,11 @@ services:
     ports:
       - "5000:5000"
     environment:
-      DATABASE_URL: mysql+pymysql://root:password@db/health_monitor
+      DATABASE_URL: "mysql+pymysql://root:fru23junior01.05#@db/health_monitor"
       SECRET_KEY: change-this-in-production
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
 volumes:
   db_data:
