@@ -51,4 +51,13 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+    // Mobile sidebar toggle
+    document.querySelector('.sidebar-toggle')?.addEventListener('click', () => {
+        document.body.classList.toggle('sidebar-open');
+    });
+    document.querySelector('.sidebar-overlay')?.addEventListener('click', () => {
+        document.body.classList.remove('sidebar-open');
+    });
+
 });
