@@ -36,26 +36,49 @@ a:hover { text-decoration: underline; }
 /* ── Layout ───────────────────────────────────────────────── */
 .app-wrapper { display: flex; min-height: 100vh; }
 
-/* ── Hamburger toggle (hidden on desktop) ─────────────────── */
+/* ── Hamburger toggle ─────────────────────────────────────── */
 .sidebar-toggle {
   display: none;
   position: fixed;
-  top: 14px;
-  left: 16px;
+  top: 12px;
+  left: 12px;
   z-index: 300;
   background: var(--navy);
   color: var(--white);
   border: none;
-  border-radius: var(--radius);
-  width: 40px;
-  height: 40px;
+  border-radius: 6px;
+  width: 38px;
+  height: 38px;
   cursor: pointer;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+  font-size: 20px;
 }
 
-/* Overlay behind sidebar on mobile */
+/* Draw hamburger lines with pure CSS — no character needed */
+.sidebar-toggle span,
+.sidebar-toggle span::before,
+.sidebar-toggle span::after {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--white);
+  border-radius: 2px;
+  position: relative;
+  transition: all .2s;
+}
+.sidebar-toggle span::before,
+.sidebar-toggle span::after {
+  content: '';
+  position: absolute;
+  left: 0;
+}
+.sidebar-toggle span::before { top: -6px; }
+.sidebar-toggle span::after  { top:  6px; }
+
+/* Overlay */
 .sidebar-overlay {
   display: none;
   position: fixed;
@@ -373,44 +396,25 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 
 /* ── Tablet: ≤ 1024px ─────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .grid-3 {
-    grid-template-columns: 1fr 1fr;
-  }
-
+  .grid-3 { grid-template-columns: 1fr 1fr; }
   .page-body { padding: 20px 24px; }
-
   .topbar { padding: 14px 24px; }
 }
 
 /* ── Small tablet / large phone: ≤ 768px ─────────────────── */
 @media (max-width: 768px) {
 
-  /* Show hamburger, hide sidebar by default */
-  .sidebar-toggle {
-    display: flex;
-  }
+  .sidebar-toggle { display: flex; }
 
-  .sidebar {
-    transform: translateX(-100%);
-  }
+  .sidebar { transform: translateX(-100%); }
 
-  /* JS adds .sidebar-open to <body> to reveal sidebar */
-  body.sidebar-open .sidebar {
-    transform: translateX(0);
-  }
+  body.sidebar-open .sidebar { transform: translateX(0); }
+  body.sidebar-open .sidebar-overlay { display: block; }
 
-  body.sidebar-open .sidebar-overlay {
-    display: block;
-  }
+  .main-content { margin-left: 0; }
 
-  /* Content fills full width */
-  .main-content {
-    margin-left: 0;
-  }
-
-  /* Push topbar title right of hamburger button */
   .topbar {
-    padding: 14px 16px 14px 64px;
+    padding: 12px 16px 12px 60px;
     flex-wrap: wrap;
     gap: 10px;
   }
@@ -419,72 +423,38 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 
   .page-body { padding: 16px; }
 
-  /* Collapse 2-col grids to 1 col */
-  .grid-2,
-  .grid-3 {
-    grid-template-columns: 1fr;
-  }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
 
-  /* Form rows stack */
-  .form-row {
-    grid-template-columns: 1fr;
-  }
+  .form-row { grid-template-columns: 1fr; }
 
-  /* Stat values slightly smaller */
   .stat-value { font-size: 24px; }
 
-  /* Auth card */
-  .auth-card {
-    padding: 28px 24px;
-  }
+  .auth-card { padding: 28px 24px; }
 }
 
 /* ── Phone: ≤ 480px ───────────────────────────────────────── */
 @media (max-width: 480px) {
   :root { --radius: 6px; }
-
   body { font-size: 14px; }
-
   .topbar h1 { font-size: 16px; }
-
   .page-body { padding: 12px; }
-
-  .stats-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
   .stat-card { padding: 14px; }
   .stat-value { font-size: 22px; }
   .stat-label { font-size: 11px; }
-
   .card-body { padding: 14px; }
-
   .card-header { padding: 12px 14px; }
-
-  /* Full-width buttons on small screens */
-  .topbar-actions .btn {
-    font-size: 13px;
-    padding: 7px 12px;
-  }
-
-  /* Table: smaller text & padding */
+  .topbar-actions .btn { font-size: 13px; padding: 7px 12px; }
   tbody td, thead th { padding: 8px 10px; font-size: 13px; }
-
-  /* Auth card full-bleed */
   .auth-page { padding: 16px; }
   .auth-card { padding: 24px 18px; }
   .auth-card h1 { font-size: 19px; }
-
   .btn { padding: 8px 14px; }
   .btn-sm { padding: 5px 10px; }
 }
 
 /* ── Very small: ≤ 360px ──────────────────────────────────── */
 @media (max-width: 360px) {
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
+  .stats-grid { grid-template-columns: 1fr; }
   .topbar { padding-left: 56px; }
 }
