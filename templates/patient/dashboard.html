@@ -45,15 +45,39 @@
     <div class="card-header"><h3>Health Trend (Last 10 Readings)</h3></div>
     <div class="card-body">
       {% if readings %}
-        {% set labels      = readings | reverse | map(attribute='recorded_at') | map('string') | list %}
-        {% set bp_sys_data = readings | reverse | map(attribute='blood_pressure_sys') | list %}
-        {% set hr_data     = readings | reverse | map(attribute='heart_rate') | list %}
-        <canvas id="healthChart"
-          data-labels="{{ labels | tojson }}"
-          data-bp-sys="{{ bp_sys_data | tojson }}"
-          data-heart-rate="{{ hr_data | tojson }}"
-          style="max-height:260px">
-        </canvas>
+        <canvas id="healthChart" style="max-height:260px"></canvas>
+        <script>
+          (function() {
+            var labels = {{ readings | reverse | map(attribute='recorded_at') | map('string') | list | tojson }};
+            var bpData = {{ readings | reverse | map(attribute='blood_pressure_sys') | list | tojson }};
+            var hrData = {{ readings | reverse | map(attribute='heart_rate') | list | tojson }};
+            bpData = bpData.map(function(v){ return v === null ? 0 : v; });
+            hrData = hrData.map(function(v){ return v === null ? 0 : v; });
+            labels = labels.map(function(l){ return l.substring(0,10); });
+            function drawChart() {
+              if (typeof Chart === 'undefined') { setTimeout(drawChart, 300); return; }
+              new Chart(document.getElementById('healthChart'), {
+                type: 'line',
+                data: {
+                  labels: labels,
+                  datasets: [
+                    { label: 'Systolic BP', data: bpData, borderColor: '#e74c3c', backgroundColor: 'rgba(231,76,60,.08)', tension: 0.3, fill: true },
+                    { label: 'Heart Rate',  data: hrData, borderColor: '#2e86de', backgroundColor: 'rgba(46,134,222,.08)', tension: 0.3, fill: true }
+                  ]
+                },
+                options: {
+                  responsive: true,
+                  plugins: { legend: { position: 'top' } },
+                  scales: {
+                    y: { beginAtZero: false, grid: { color: '#eaecf0' } },
+                    x: { grid: { display: false } }
+                  }
+                }
+              });
+            }
+            drawChart();
+          })();
+        </script>
       {% else %}
         <p class="text-muted">No readings yet. Add your first reading to see trends.</p>
       {% endif %}

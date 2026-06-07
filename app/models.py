@@ -13,12 +13,12 @@ class User(UserMixin, db.Model):
     name       = db.Column(db.String(100), nullable=False)
     email      = db.Column(db.String(150), unique=True, nullable=False)
     password   = db.Column(db.String(256), nullable=False)
-    role       = db.Column(db.String(20), nullable=False, default='patient')  # patient | doctor | admin
+    role       = db.Column(db.String(20), nullable=False, default='patient')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    readings         = db.relationship('HealthReading', foreign_keys='HealthReading.patient_id', backref='patient', lazy=True)
+    readings          = db.relationship('HealthReading', foreign_keys='HealthReading.patient_id', backref='patient', lazy=True)
     assigned_patients = db.relationship('PatientDoctor', foreign_keys='PatientDoctor.doctor_id', backref='doctor', lazy=True)
-    assigned_doctor  = db.relationship('PatientDoctor', foreign_keys='PatientDoctor.patient_id', backref='patient_rel', lazy=True)
+    assigned_doctor   = db.relationship('PatientDoctor', foreign_keys='PatientDoctor.patient_id', backref='patient_rel', lazy=True)
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -32,22 +32,22 @@ class User(UserMixin, db.Model):
 
 class HealthReading(db.Model):
     __tablename__ = 'health_readings'
-    id             = db.Column(db.Integer, primary_key=True)
-    patient_id     = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    blood_pressure_sys = db.Column(db.Integer)   # systolic
-    blood_pressure_dia = db.Column(db.Integer)   # diastolic
-    heart_rate     = db.Column(db.Integer)
-    temperature    = db.Column(db.Float)
-    blood_sugar    = db.Column(db.Float)
-    notes          = db.Column(db.Text)
-    is_flagged     = db.Column(db.Boolean, default=False)
-    recorded_at    = db.Column(db.DateTime, default=datetime.utcnow)
+    id                 = db.Column(db.Integer, primary_key=True)
+    patient_id         = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    blood_pressure_sys = db.Column(db.Integer)
+    blood_pressure_dia = db.Column(db.Integer)
+    heart_rate         = db.Column(db.Integer)
+    temperature        = db.Column(db.Float)
+    blood_sugar        = db.Column(db.Float)
+    notes              = db.Column(db.Text)
+    is_flagged         = db.Column(db.Boolean, default=False)
+    recorded_at        = db.Column(db.DateTime, default=datetime.utcnow)
 
     def check_alerts(self):
         flags = []
-        if self.blood_pressure_sys and self.blood_pressure_sys > 140:
+        if self.blood_pressure_sys and self.blood_pressure_sys >= 140:
             flags.append('High systolic blood pressure')
-        if self.blood_pressure_dia and self.blood_pressure_dia > 90:
+        if self.blood_pressure_dia and self.blood_pressure_dia >= 90:
             flags.append('High diastolic blood pressure')
         if self.heart_rate and (self.heart_rate < 50 or self.heart_rate > 110):
             flags.append('Abnormal heart rate')
