@@ -89,7 +89,7 @@
     <div class="card-body">
       {% if flagged %}
         {% for r in flagged[:5] %}
-          <div class="alert alert-warning" style="margin-bottom:8px">
+          <div class="alert-card alert-warning" style="margin-bottom:8px">
             <strong>{{ r.recorded_at.strftime('%d %b %Y, %H:%M') }}</strong><br/>
             {% for alert in r.check_alerts() %}
               {{ alert }}<br/>
