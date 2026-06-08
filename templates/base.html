@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>{% block title %}Health Monitor{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
+<button class="sidebar-toggle" aria-label="Toggle menu"><span></span></button>
+<div class="sidebar-overlay"></div>
 <div class="app-wrapper">
 
   <!-- Sidebar -->
@@ -59,9 +61,6 @@
   <!-- Main -->
   <div class="main-content">
     <header class="topbar">
-      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
-        <span></span><span></span><span></span>
-      </button>
       <h1>{% block page_title %}{% endblock %}</h1>
       <div class="topbar-actions">{% block topbar_actions %}{% endblock %}</div>
     </header>
@@ -82,10 +81,6 @@
   </div>
 
 </div>
-
-<!-- Overlay for closing sidebar on mobile -->
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
