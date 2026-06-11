@@ -54,7 +54,7 @@
     <div class="sidebar-footer">
       <strong>{{ current_user.name }}</strong>
       {{ current_user.role | capitalize }}
-      &nbsp;·&nbsp;<a href="{{ url_for('auth.logout') }}" style="color:rgba(255,255,255,.5)">Logout</a>
+      &nbsp;·&nbsp;<a href="{{ url_for('auth.logout') }}">Logout</a>
     </div>
   </aside>
 

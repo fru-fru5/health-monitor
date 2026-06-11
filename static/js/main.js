@@ -1,5 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+    // Close sidebar on Escape key
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && document.body.classList.contains('sidebar-open')) {
+            document.body.classList.remove('sidebar-open');
+        }
+    });
+
     // Sidebar toggle (mobile)
     var toggle   = document.querySelector('.sidebar-toggle');
     var overlay  = document.querySelector('.sidebar-overlay');
