@@ -85,6 +85,12 @@ a:hover { text-decoration: underline; }
   inset: 0;
   background: rgba(0,0,0,.45);
   z-index: 199;
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+
+body.sidebar-open .sidebar-overlay {
+  opacity: 1;
 }
 
 /* ── Sidebar ──────────────────────────────────────────────── */
@@ -394,6 +400,19 @@ textarea.form-control { resize: vertical; min-height: 80px; }
    RESPONSIVE BREAKPOINTS
    ══════════════════════════════════════════════════════════ */
 
+/* Hamburger → X when sidebar is open */
+body.sidebar-open .sidebar-toggle span {
+  background: transparent;
+}
+body.sidebar-open .sidebar-toggle span::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+body.sidebar-open .sidebar-toggle span::after {
+  top: 0;
+  transform: rotate(-45deg);
+}
+
 /* ── Tablet: ≤ 1024px ─────────────────────────────────────── */
 @media (max-width: 1024px) {
   .grid-3 { grid-template-columns: 1fr 1fr; }
@@ -406,9 +425,16 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 
   .sidebar-toggle { display: flex; }
 
-  .sidebar { transform: translateX(-100%); }
+  .sidebar {
+    transform: translateX(-100%);
+    box-shadow: none;
+  }
 
-  body.sidebar-open .sidebar { transform: translateX(0); }
+  body.sidebar-open { overflow: hidden; }
+  body.sidebar-open .sidebar {
+    transform: translateX(0);
+    box-shadow: 4px 0 24px rgba(0,0,0,.25);
+  }
   body.sidebar-open .sidebar-overlay { display: block; }
 
   .main-content { margin-left: 0; }
